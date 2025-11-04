@@ -38,3 +38,14 @@ export async function getUserId() {
     const userId = (await cookies()).get('session_userid')?.value
     return userId ? userId : null
 }
+
+// export async function getAccessToken() {
+//     let accessToken = (await cookies()).get('sessions_access_token')?.value;
+
+//     return accessToken;
+// }
+
+export async function getAccessToken() {
+  let accessToken = (await cookies()).get('session_access_token')?.value; // ✅ fixed
+  return accessToken;
+}
