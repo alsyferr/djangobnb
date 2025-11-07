@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Modals from "./Modals"
 import useAddPropertyModal from "@/app/hooks/useAddPropertyModal"
-import LoginModal from "./LoginModal"
 import CustomButton from "../forms/CustomButton"
 import { ChangeEvent, useState } from "react"
 import Categories from "../addproperty/Categories"
@@ -70,36 +69,19 @@ const AddPropertyModal = () => {
             formData.append('country_code', dataCountry.value);
             formData.append('image', dataImage);
 
-            // const response = await apiService.post('api/properties/create/', formData);
-
-            // if (response.success) {
-            //     console.log('SUCCESS :-D');
-
-            //     router.push('/?added=true');
-
-            //     addPropertyModal.close();
-            // } else {
-            //     console.log('Error');
-
-            //     const tmpErrors: string[] = Object.values(response).map((error: any) => {
-            //         return error;
-            //     })
-
-            //     setErrors(tmpErrors)
-            // }
-
             const response = await apiService.post('api/properties/create/', formData);
             console.log("Response from API:", response);
 
             if (response && !response.code && !response.detail) {
-            console.log('SUCCESS 😄');
-            addPropertyModal.close();
-            router.push('/?added=true');
-            router.refresh(); // ensure page updates
+                console.log('SUCCESS 😄');
+                addPropertyModal.close();
+
+                router.push('/?added=true');
+                router.refresh(); // ensure page updates
             } else {
-            console.log('Error');
-            const tmpErrors: string[] = Object.values(response).map((error: any) => error);
-            setErrors(tmpErrors);
+                console.log('Error');
+                const tmpErrors: string[] = Object.values(response).map((error: any) => error);
+                setErrors(tmpErrors);
             }
         }
     }
