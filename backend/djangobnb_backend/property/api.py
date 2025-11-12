@@ -29,6 +29,13 @@ def properties_list(request):
     
     
     # Filter
+    
+    
+    is_favorites = request.GET.get('favorites', '')
+    if is_favorites:
+        properties = properties.filter(favorited__in=[user])
+        
+        
     landlord_id = request.GET.get('landlord_id', '')
     
     if landlord_id: 
