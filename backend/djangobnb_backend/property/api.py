@@ -1,24 +1,55 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
-
+from rest_framework_simplejwt.tokens import AccessToken
 from .forms import PropertyForm
 from .models import Property, Reservation
 from .serializers import PropertiesListSerializer ,PropertiesDetailsSerializer, ReservationsListSerializer
+from useraccount.models import User
+
 
 @api_view(['GET'])
 @authentication_classes([])  # No authentication required
 @permission_classes([])  # No permission required
 def properties_list(request):
+    # 
+    # Auth
+    try:
+        token = request.META['HTTP_AUTHORIZATION'].split('Bearer ')[1]
+        token = AccessToken(token)
+        user_id = token.payload['user_id']
+        user = User.objects.get(pk=user_id)
+    except Exception as e:
+        user = None
+    
+    print('user,', user)
+    # 
+    # 
+    favorites = []
     properties = Property.objects.all()
     
+    
+    # Filter
     landlord_id = request.GET.get('landlord_id', '')
     
     if landlord_id: 
         properties = properties.filter(landlord_id=landlord_id)
+        
+        
+    # Favorites
+    if user:
+        for property in properties:
+            if user in property.favorited.all():
+                favorites.append(property.id) 
+                
+    # print('favorites', favorites)
+    
+    
+    # 
     
     serializer = PropertiesListSerializer(properties, many=True)
     return JsonResponse({
-        'data': serializer.data
+        'data': serializer.data,
+        'favorites': favorites
     })
     
 @api_view(['GET'])
@@ -31,16 +62,6 @@ def properties_detail(request, pk):
 
     return JsonResponse(serializer.data)
 
-
-# @api_view(['GET'])
-# @authentication_classes([])
-# @permission_classes([])
-# def property_reservations(request, pk):
-#     property = Property.objects.get(pk=pk)
-#     reservations = property.reservations.all()
-    
-#     serializer = ReservationListSerializer(reservations, many=True)
-#     return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['GET'])
@@ -98,3 +119,20 @@ def book_property(request, pk):
         print('error', e)
         
         return JsonResponse({'success': False})
+    
+    
+@api_view(['POST'])
+def toggle_favorite(request, pk):
+    
+    property = Property.objects.get(pk=pk)
+    
+    if request.user in property.favorited.all():
+        property.favorited.remove(request.user)
+        
+        return JsonResponse({'is_favorite': False})
+    else:
+        property.favorited.add(request.user)
+        
+        return JsonResponse({'is_favorite': True})
+    
+    
