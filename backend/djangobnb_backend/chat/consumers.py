@@ -2,8 +2,11 @@ import json
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.http import JsonResponse
 
-from .models import ConversationMessage
+from useraccount.models import User
+
+from .models import ConversationMessage, Conversation
 
     
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -63,3 +66,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
 
         ConversationMessage.objects.create(conversation_id=conversation_id, body=body, sent_to_id=sent_to_id, created_by=user)
+        
+        

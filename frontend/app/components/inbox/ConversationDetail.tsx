@@ -94,7 +94,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({conversation, us
         {messages.map((message, index) => (
         <div 
           key={index}
-          className={`w-[80%] p-4 px-6 rounded-xl ${message.created_by.name === myUser?.name ? 'ml-[20%] bg-blue-200' : 'bg-gray-200'}`}>
+          className={`w-[80%] p-4 px-6 rounded-xl ${message.created_by.name == myUser?.name ? 'ml-[20%] bg-blue-200' : 'bg-gray-200'}`}>
         
           <p className="font-bold text-gray-500">{message.created_by.name}</p>
           <p className='text-gray-700'>{message.body}</p>
@@ -105,7 +105,7 @@ const ConversationDetail: React.FC<ConversationDetailProps> = ({conversation, us
         {realTimeMessages.map((message, index) => (
         <div 
           key={index}
-          className={`w-[80%] p-4 px-6 rounded-xl ${message.name === myUser?.name ? 'ml-[20%] bg-blue-200' : 'bg-gray-200'}`}>
+          className={`w-[80%] p-4 px-6 rounded-xl ${message.name == myUser?.name ? 'ml-[20%] bg-blue-200' : 'bg-gray-200'}`}>
         
           <p className="font-bold text-gray-500">{message.name}</p>
           <p className='text-gray-700'>{message.body}</p>
